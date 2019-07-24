@@ -8,3 +8,11 @@ This is a cli app that consumes some of the endpoints of the authors haven backe
 $ cd authors-haven-cli
 ```
 - Create and activate a virtual environment
+```
+$ virtualenv env
+$ source env/bin/activate
+```
+- Install the dependencies and app
+```
+$ pip install .
+```
