@@ -73,3 +73,33 @@ def list(ctx, save, json, csv, limit, page):
             )
     else:
         click.echo('🙀 🙀 🙀 🙀 Oops an error occured 🙀 🙀 🙀 🙀')
+
+
+@ah.command()
+@click.option('--save', is_flag=True, default=False)
+@click.option('--json', is_flag=True, default=False)
+@click.option('--csv', is_flag=True, default=False)
+@click.option('--limit', type=int, default=5)
+@click.option('--page', type=int, default=1)
+@click.argument('query', default="")
+@click.pass_context
+def search(ctx, query, save, json, csv, limit, page):
+    ''' Search for an article '''
+    url = ('https://ah-premier-staging.herokuapp.com/api/articles'
+           '?page_size={}&page={}&title={}'.format(limit, page, query))
+    res = requests.get(url)
+    if res.status_code == 200:
+        data = res.json()
+        print(data)
+        articles = js_pck.dumps(data['articles'], indent=2)
+        click.echo(articles)
+        if save:
+            filename = "search_for_{}_article".format(query)
+            if json:
+                export.export_json(filename, data)
+            elif csv:
+                export.export_csv(filename=filename, data=dict(articles))
+    elif res.status_code == 404:
+        click.echo('🙀 🙀 🙀 🙀 The article does no exist 🙀 🙀 🙀 🙀')
+    else:
+        click.echo('🙀 🙀 🙀 🙀 Oops an error occured 🙀 🙀 🙀 🙀')
